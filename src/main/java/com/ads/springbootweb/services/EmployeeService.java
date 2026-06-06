@@ -2,6 +2,7 @@ package com.ads.springbootweb.services;
 
 import com.ads.springbootweb.dto.EmployeeDTO;
 import com.ads.springbootweb.entities.EmployeeEntity;
+import com.ads.springbootweb.exception.ResourceNotFoundException;
 import com.ads.springbootweb.repositories.EmployeesRepository;
 import org.apache.el.util.ReflectionUtil;
 import org.aspectj.util.Reflection;
@@ -44,6 +45,9 @@ public class EmployeeService {
     }
 
     public EmployeeDTO updateEmployeeById(Long employeeId, EmployeeDTO inputEmployee) {
+        boolean exists = isExistsByEmployeeId(employeeId);
+        if (!exists) throw new ResourceNotFoundException("Id Not found" + " -> " + employeeId);
+
         EmployeeEntity employeeEntity = modelMapper.map(inputEmployee, EmployeeEntity.class);
         employeeEntity.setId(employeeId);
         EmployeeEntity savedEmployee = employeesRepository.save(employeeEntity);
